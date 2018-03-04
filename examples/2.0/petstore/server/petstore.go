@@ -26,6 +26,10 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	logAllRequests := http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
+		log.Printf("Request: %#v", r)
+		petstoreAPI.ServeHTTP(w, r)
+	})
 	log.Println("Serving petstore api on http://127.0.0.1:8344/swagger-ui/")
-	http.ListenAndServe(":8344", petstoreAPI)
+	http.ListenAndServe(":8344", logAllRequests)
 }
