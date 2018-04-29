@@ -19,9 +19,14 @@ import (
 	"net/http"
 
 	"github.com/go-swagger/go-swagger/examples/2.0/petstore/server/api"
+	"fmt"
+	"flag"
 )
 
 func main() {
+	port := flag.Uint("p", 8344, "listener port")
+	flag.Parse()
+
 	petstoreAPI, err := api.NewPetstore()
 	if err != nil {
 		log.Fatalln(err)
@@ -30,6 +35,6 @@ func main() {
 		log.Printf("Request: %#v", r)
 		petstoreAPI.ServeHTTP(w, r)
 	})
-	log.Println("Serving petstore api on http://127.0.0.1:8344/swagger-ui/")
-	http.ListenAndServe(":8344", logAllRequests)
+	log.Printf("Serving petstore api on http://127.0.0.1:%v/swagger-ui/", *port)
+	http.ListenAndServe(fmt.Sprintf(":%v", *port), logAllRequests)
 }
