@@ -1,0 +1,95 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Swagger Memberships
+  license:
+    name: MIT
+host: membership.swagger.io
+basePath: /v1
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /memberships:
+    get:
+      summary: List all memberships
+      operationId: listMemberships
+      tags:
+        - memberships
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: A paged array of memberships
+          headers:
+            x-next:
+              type: string
+              description: A link to the next page of responses
+          schema:
+            $ref: '#/definitions/Memberships'
+        default:
+          description: unexpected error
+           schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create a membership
+      operationId: createMemberships
+      tags:
+        - memberships
+      responses:
+        "201":
+          description: Null response
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /memberships/{membershipId}:
+    get:
+      summary: Info for a specific membership
+      operationId: showMembershipById
+      tags:
+        - memberships
+      parameters:
+        - name: membershipId
+          in: path
+          required: true
+          description: The id of the membership to retrieve
+          type: string
+      responses:
+        "200":
+          description: Expected response to a valid request
+          schema:
+            $ref: '#/definitions/Memberships'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Membership:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+  Memberships:
+    type: array
+    items:
+      $ref: '#/definitions/Membership'
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
